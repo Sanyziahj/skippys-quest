@@ -10,6 +10,7 @@ A top-down 16-bit action-adventure starring Skippy. Free, in the browser: https:
 - Chapter 6: The Meteor Shower (Blaze blasts a path, Rusty / Buck / Kal fly-bys, the Comet Star Shard)
 - Chapter 7: The Crossroad (Santt's space board, Slide's board shop, board fast travel, the Skyway trial)
 - Chapter 8: DreamLand Carnival (Spike's lightning, Cavendish's High Striker, Eyereenia, the mirror Dark World, Furn's stun-circle glasses)
+- Chapter 9: Fright's Castle (seven shards open the gate, the Torch Hall, Fright, the Red King returns, credits and a downloadable victory poster). The story is complete.
 
 Dialog boxes show each character's portrait.
 
