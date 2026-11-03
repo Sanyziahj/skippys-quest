@@ -9,6 +9,7 @@ A top-down 16-bit action-adventure starring Skippy. Free, in the browser: https:
 - Chapter 5: The Moon Colony (robot uprising, the Drill Sergeant's light armor + seeking missiles, the Moon Station, the Overlord)
 - Chapter 6: The Meteor Shower (Blaze blasts a path, Rusty / Buck / Kal fly-bys, the Comet Star Shard)
 - Chapter 7: The Crossroad (Santt's space board, Slide's board shop, board fast travel, the Skyway trial)
+- Chapter 8: DreamLand Carnival (Spike's lightning, Cavendish's High Striker, Eyereenia, the mirror Dark World, Furn's stun-circle glasses)
 
 Dialog boxes show each character's portrait.
 
