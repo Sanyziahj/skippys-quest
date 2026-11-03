@@ -7,6 +7,8 @@ A top-down 16-bit action-adventure starring Skippy. Free, in the browser: https:
 - Chapter 3: Sakura Village → Neon Edge → SuperNova Club (Ronin, the bamboo trial, DeeJay, Draco & Spark)
 - Chapter 4: The Andromeda Casino (Silas, blackjack, AL on piano, Silas's Vault, the Void Security Core, the raygun)
 - Chapter 5: The Moon Colony (robot uprising, the Drill Sergeant's light armor + seeking missiles, the Moon Station, the Overlord)
+- Chapter 6: The Meteor Shower (Blaze blasts a path, Rusty / Buck / Kal fly-bys, the Comet Star Shard)
+- Chapter 7: The Crossroad (Santt's space board, Slide's board shop, board fast travel, the Skyway trial)
 
 Dialog boxes show each character's portrait.
 
