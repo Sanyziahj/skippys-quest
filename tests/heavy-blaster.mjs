@@ -146,13 +146,15 @@ async function expectGift(page, label, shot) {
       hands: __SQ.hands(),
       z: (__SQ.hud().find((b) => b.id === "zname") || {}).text || "",
     }));
-    ok(hud.hands.item === "heavy" && hud.z.indexOf("HEAV") >= 0, label + " item slot reads HEAVY " + JSON.stringify(hud));
-    for (const [button, name] of [["attack", "X"], ["item", "Z"], ["swap", "SWAP"]]) {
-      await page.evaluate(() => { __SQ.shots.length = 0; __SQ.step(30); });
-      await tap(page, button, 3);
-      const kinds = await page.evaluate(() => __SQ.shots.map((s) => s.kind));
-      ok(kinds.indexOf("heavy") >= 0, label + " " + name + " fires the blaster " + JSON.stringify(kinds));
-    }
+    ok(hud.hands.item === "heavy" && hud.hands.melee === "sword" && hud.z.indexOf("HEAV") >= 0, label + " item slot reads HEAVY and X stays the sword " + JSON.stringify(hud));
+    await page.evaluate(() => { __SQ.shots.length = 0; __SQ.step(30); });
+    await tap(page, "attack", 2);
+    const swung = await page.evaluate(() => ({ melee: __SQ.melee(), kinds: __SQ.shots.map((s) => s.kind) }));
+    ok(swung.melee === "sword" && swung.kinds.indexOf("heavy") < 0, label + " X swings melee and does not fire the blaster " + JSON.stringify(swung));
+    await page.evaluate(() => { __SQ.shots.length = 0; __SQ.step(30); });
+    await tap(page, "item", 3);
+    const zshot = await page.evaluate(() => __SQ.shots.map((s) => s.kind));
+    ok(zshot.indexOf("heavy") >= 0, label + " Z fires the blaster " + JSON.stringify(zshot));
     const giftSave = await page.evaluate(() => localStorage.getItem("sq_save_v1"));
     await page.evaluate(() => __SQ.warp("saloon", 8.5, 6.4, 1));
     await page.evaluate(() => { __SQ.shots.length = 0; __SQ.step(30); });
@@ -160,6 +162,14 @@ async function expectGift(page, label, shot) {
     await page.evaluate(() => __SQ.step(40));
     const poured = await page.evaluate(() => !!__SQ.flags.pour_box);
     ok(poured, label + " heavy shot opens the Pour stairs");
+    const swapped = [];
+    for (let i = 0; i < 4; i++) {
+      await page.evaluate(() => __SQ.step(8));
+      await tap(page, "swap", 2);
+      swapped.push(await page.evaluate(() => __SQ.hands().item));
+    }
+    const kept = await page.evaluate(() => ({ melee: __SQ.melee(), missile: !!__SQ.P.items.missile, raygun: !!__SQ.P.items.raygun }));
+    ok(swapped.indexOf("heavy") >= 0 && swapped.some((id) => id && id !== "heavy") && kept.missile && kept.raygun && kept.melee === "sword", label + " SWAP cycles the blaster with the other items " + JSON.stringify(swapped));
     return giftSave;
   }
   return null;
@@ -313,7 +323,7 @@ async function expectGift(page, label, shot) {
   await stuck.ctx.close();
 }
 
-// Phone: the equipped blaster is on screen, and ATTACK, ITEM, and SWAP fire it.
+// Phone: ATTACK stays melee, ITEM fires the blaster, SWAP cycles.
 {
   const phoneSave = JSON.stringify(Object.assign(JSON.parse(ride()), {
     items: { baton: true, bow: true, sword: true, raygun: true, missile: true, armor: true, heavy: true },
@@ -330,14 +340,21 @@ async function expectGift(page, label, shot) {
       z: (__SQ.hud().find((b) => b.id === "zname") || {}).text || "",
     }));
     ok(hud.item === "heavy" && hud.z.indexOf("HEAV") >= 0, name + " phone item slot shows the blaster " + JSON.stringify(hud));
-    for (const button of ["attack", "item", "swap"]) {
-      await phone.page.evaluate(() => { __SQ.shots.length = 0; __SQ.step(30); });
-      const el = phone.page.locator("[data-b=" + button + "]");
-      await el.tap();
-      await phone.page.evaluate(() => __SQ.step(4));
-      const kinds = await phone.page.evaluate(() => __SQ.shots.map((s) => s.kind));
-      ok(kinds.indexOf("heavy") >= 0, name + " phone " + button + " fires the blaster " + JSON.stringify(kinds));
-    }
+    await phone.page.evaluate(() => { __SQ.shots.length = 0; __SQ.step(30); });
+    await phone.page.locator("[data-b=attack]").tap();
+    await phone.page.evaluate(() => __SQ.step(3));
+    const attack = await phone.page.evaluate(() => ({ melee: __SQ.melee(), kinds: __SQ.shots.map((s) => s.kind) }));
+    ok(attack.melee === "sword" && attack.kinds.indexOf("heavy") < 0, name + " phone ATTACK stays melee " + JSON.stringify(attack));
+    await phone.page.evaluate(() => { __SQ.shots.length = 0; __SQ.step(30); });
+    await phone.page.locator("[data-b=item]").tap();
+    await phone.page.evaluate(() => __SQ.step(4));
+    const itemKinds = await phone.page.evaluate(() => __SQ.shots.map((s) => s.kind));
+    ok(itemKinds.indexOf("heavy") >= 0, name + " phone ITEM fires the blaster " + JSON.stringify(itemKinds));
+    await phone.page.evaluate(() => __SQ.step(30));
+    await phone.page.locator("[data-b=swap]").tap();
+    await phone.page.evaluate(() => __SQ.step(4));
+    const cycled = await phone.page.evaluate(() => ({ item: __SQ.hands().item, missile: !!__SQ.P.items.missile, melee: __SQ.melee() }));
+    ok(cycled.item !== "heavy" && cycled.missile && cycled.melee === "sword", name + " phone SWAP keeps the other item " + JSON.stringify(cycled));
     ok(phone.errors.length === 0, name + " phone errors " + phone.errors.join(" | "));
     await phone.ctx.close();
   }

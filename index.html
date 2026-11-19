@@ -19895,10 +19895,6 @@ ram_mem_amulet: [
         else if ((d.charge || 0) >= 0.45) (fireJustice(), (d.charge = 0));
         else d.charge = 0;
       else d.charge = 0;
-      if (A.story === "skippy" && it === "heavy" && d.roll <= 0 && (U.attackE || U.itemE || U.swapE || U.priE)) {
-        fireBlast("heavy");
-        return;
-      }
       (A.story === "ros"
         ? U.attackE && d.roll <= 0 && d.atk <= 0 && fireLasers()
         : U.attackE && d.roll <= 0 && d.atk <= 0 && swingMelee(meleeNow()),
