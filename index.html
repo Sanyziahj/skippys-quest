@@ -25982,6 +25982,10 @@ html.srml #prize:not([hidden]),html.srml #share:not([hidden]){position:fixed;ins
 html.srml #srml-shx{display:none}
 html.srml #share:not([hidden]) #srml-shx{display:inline-block}
 }
+@media (pointer:coarse) and (orientation:landscape){
+html.srml #srml-rows{gap:2px;touch-action:pan-y}
+html.srml #srml-rows .srml-b{height:48px;font-size:12px;line-height:1.15;padding:0 8px}
+}
 </style>
 <script id="srml-js">(function(){
 var coarse=window.matchMedia&&matchMedia("(pointer:coarse)").matches;
