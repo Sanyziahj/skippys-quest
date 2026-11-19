@@ -9194,7 +9194,7 @@ canvas{display:block;width:100%;aspect-ratio:320/224;image-rendering:pixelated;i
   }
   Object.assign(Ea, {
     blast: { name: "BLASTER", desc: "DRILL'S BLAST. X OR Z. HE LIKES THE BOOM.", jingle: "item" },
-    heavy: { name: "HEAVY LASER BLASTER", desc: "A GIFT FROM DRILL SERGEANT. X, Z, OR SWAP.", jingle: "item" },
+    heavy: { name: "HEAVY LASER BLASTER", desc: "A GIFT FROM DRILL SERGEANT. Z OR SWAP.", jingle: "item" },
     plasma: { name: "PLASMA EDGE", desc: "A CHARGED BLADE. X SWINGS HARDER.", jingle: "item" },
     disc: { name: "BOOMERANG DISC", desc: "Z THROWS IT. IT COMES HOME.", jingle: "item" },
     suit: { name: "RIDING SUIT", desc: "HITS LAND SOFTER.", jingle: "item" },
@@ -16219,6 +16219,16 @@ ram_mem_amulet: [
           (d.tool = "heavy"),
           (d.act = "heavy"));
     }
+    function standBeside() {
+      for (let f of Ta) {
+        if (!f.vis || f.leave > 0) continue;
+        if (Math.abs(f.x - d.x) < 28 && Math.abs(f.y - d.y) < 32) {
+          f.x = d.x + 40;
+          f.y = d.y;
+          f.dir = 2;
+        }
+      }
+    }
     function throughDrill() {
       ((Mt = "sq_save_ds_v1"), (ee.ds_home_end = !0), (ee.ds_ready = !0));
       A.state === "play" && w && w.id !== "dream" && xe();
@@ -16231,14 +16241,17 @@ ram_mem_amulet: [
       Bt() || Et();
       ((ee.tale_drill = !0), (ee.heavy_got = !0));
       (grantHeavy(),
-        ba("moon", 5, 8, 1),
+        ba("moon", 5, 11, 0),
         (A.banner = w.name),
         (A.bannerT = 2.2),
         (ue = { item: "heavy", n: 1, t: 0 }),
         (d.hold = "heavy"),
         (d.holdT = 8),
+        (d.dir = 0),
+        standBeside(),
         ye("tale_drill_close"),
-        xe());
+        xe(),
+        (A.saveT = 0));
     }
     function returnToPresent() {
       backToSkippy(!0);
@@ -21891,8 +21904,9 @@ ram_mem_amulet: [
       }
     }
     function drawHeldBlast(e, a) {
+      if (d.hold === "heavy" && d.holdT > 0) return;
       let id =
-        d.hold === "heavy" || d.pri === "heavy" || d.sec === "heavy"
+        d.pri === "heavy" || d.sec === "heavy"
           ? "heavy"
           : weaponNow() === "blast"
             ? "blast"
@@ -22002,7 +22016,16 @@ ram_mem_amulet: [
           n.drawImage(O.icon.bow, -4, -8),
           n.restore());
       }
-      if ((s || f(), d.hold && d.holdT > 0)) {
+      if ((s || f(), d.hold === "heavy" && d.holdT > 0 && O.icon.heavy)) {
+        Aa(ga(), e, a, 0, 0, 1);
+        (n.fillStyle = "#e8e8ee"),
+          n.fillRect(Math.round(e - 14), Math.round(a - 30), 4, 12),
+          n.fillRect(Math.round(e + 10), Math.round(a - 30), 4, 12),
+          (n.fillStyle = "#3a3a46"),
+          n.fillRect(Math.round(e - 15), Math.round(a - 34), 6, 5),
+          n.fillRect(Math.round(e + 9), Math.round(a - 34), 6, 5),
+          n.drawImage(O.icon.heavy, Math.round(e - 14), Math.round(a - 48), 28, 28);
+      } else if (d.hold && d.holdT > 0) {
         let c = O.icon[d.hold] || O.icon.coin;
         (n.drawImage(c, e - 8, a - 46),
           Math.random() < 0.3 &&
