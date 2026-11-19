@@ -42,9 +42,11 @@ for (const [w, h, name] of [[844, 390, "landscape"], [390, 844, "portrait"]]) {
   for (const b of info.btns) {
     const inside = b.x >= -0.5 && b.y >= -0.5 && b.r <= w + 0.5 && b.b <= h + 0.5;
     const over = b.x < info.canvas.r - 1 && b.r > info.canvas.x + 1 && b.y < info.canvas.b - 1 && b.b > info.canvas.y + 1;
+    const minH = name === "landscape" ? 48 : 52;
     ok(inside, name + ": " + b.t + " fully on screen (" + Math.round(b.x) + "," + Math.round(b.y) + " " + Math.round(b.b) + ")");
     ok(!over, name + ": " + b.t + " does not cover the canvas");
     ok(!b.clipX && !b.clipY, name + ": " + b.t + " label fits the row");
+    ok(b.h + 0.5 >= minH, name + ": " + b.t + " is at least " + minH + "px tall (" + b.h.toFixed(1) + ")");
   }
   await ctx.close();
 }
