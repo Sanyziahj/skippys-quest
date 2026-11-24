@@ -26131,13 +26131,13 @@ function layout(){
     if(rows.style.display!=="none"){rows.style.display="none";rows.dataset.sig="";rows.innerHTML="";}
   }
   function cluster(limitLeft){
-    var S=56,A=74,G=10;
+    var K=window.__SQK||1,S=Math.round(56*K),A=Math.round((land?80:78)*K),G=10;
     var need=S+G+A+G+S, room=H-sat-sab-18;
-    if(need>room){G=6;A=66;S=56;}
+    if(need>room){G=6;A=Math.round(74*K);S=Math.round(52*K);}
     var right=W-sar-8, bottom=H-sab-12;
     function span(){return A+G+S;}
     if(limitLeft){
-      while(span()>right-limitLeft && A>64) A-=2;
+      while(span()>right-limitLeft && A>Math.round(S*1.3)) A-=2;
     }
     var item={w:S,h:S}, atk={w:A,h:A}, talk={w:S,h:S}, swap={w:S,h:S}, board={w:S,h:S};
     item.x=right-S;
@@ -26190,10 +26190,11 @@ function layout(){
     return;
   }
   if(mode==="play"||mode==="dialog"){
-    var box=placeGame(land?0:sat+56, 0, 0, 0, land?"mid":"top");
+    var LG=0,RG=0;if(land){var K2=window.__SQK||1;LG=Math.round(sal+118);RG=Math.round(sar+8+(80+10+56)*K2+6);}
+    var box=placeGame(land?0:sat+56, 0, LG, RG, land?"mid":"top");
     hideRows();
     var gutter=box.x+box.w+4;
-    var c=cluster(W-gutter>=130?gutter:0);
+    var c=cluster(land?gutter:(W-gutter>=130?gutter:0));
     if(by.roll) by.roll.dataset.b=R.dataset.rollact==="board"?"board":"roll";
     var actLabel=mode==="dialog"?"ACTION":(R.dataset.actlabel||"ACTION");
     var rollLabel=R.dataset.rolllabel||"ROLL";
@@ -26252,4 +26253,50 @@ var sh=document.getElementById("share");if(sh){var x=document.createElement("but
 document.addEventListener("touchmove",function(e){var t=e.target;if(!(t.closest&&t.closest("#prize,#share,#srml-rows")))e.preventDefault();},{passive:false});
 document.addEventListener("gesturestart",function(e){e.preventDefault();});
 })();</script>
+<!--SQ-PHONE 2026-11-24 (phone controls review): sideways game screen sized to fit the side gutters on every phone (zero overlap, 667x375 included); ATTACK the biggest button (80px sideways); semi-solid buttons; light vibration (toggle); pause on app switch; control size / opacity settings. The landscape rule is unchanged: PAUSE + MAP top-left, pad left, SWAP upper-left, ACTION top-right, ATTACK middle-left, ITEM. Saves untouched.-->
+<style id="sq-up-css">
+@media (pointer:coarse){
+html.srml .srml-b{background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.4),transparent 38%),rgba(12,16,32,.8)}
+html.srml .srml-b.atk{font-size:15px;border-width:4px}
+html.sqop .srml-b:not(.dim),html.sqop #stick{opacity:var(--sqop)!important}
+#sq-gear{position:fixed;z-index:8;width:48px;height:48px;border-radius:50%;display:none;align-items:center;justify-content:center;font:700 22px system-ui,sans-serif;color:#eef2ff;background:rgba(12,16,32,.8);border:3px solid #b7c3e6;touch-action:none;-webkit-user-select:none;user-select:none}
+html[data-touch=title] #sq-gear,html[data-touch=pause] #sq-gear{display:flex}
+#sq-set{position:fixed;inset:0;z-index:80;background:rgba(3,2,10,.88);display:flex;align-items:center;justify-content:center;touch-action:none;font-family:system-ui,sans-serif}
+#sq-set[hidden]{display:none}
+#sq-set .box{background:#10142a;border:2px solid #3a3f55;border-radius:16px;padding:12px 14px;color:#e9eef8;width:min(340px,92vw);max-height:94vh;overflow:auto;box-sizing:border-box}
+#sq-set h3{margin:0 0 6px;font-size:15px;letter-spacing:2px;text-align:center;color:#ffe650}
+#sq-set .r{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0}
+#sq-set .r span{font-size:13px;font-weight:700;letter-spacing:1px}
+#sq-set .g{display:flex;gap:6px}
+#sq-set button{min-width:48px;min-height:44px;border-radius:12px;border:2px solid #3a3f55;background:#141a2e;color:#8a90a8;font:800 13px system-ui,sans-serif;transition:transform .08s,box-shadow .08s}
+#sq-set button.sel{color:#fff;background:#2a3456;border-color:#ffe650;box-shadow:0 0 12px 3px rgba(255,230,80,.6);transform:scale(1.08)}
+#sq-set button.x{width:100%;margin-top:8px;color:#fff;border-color:#5cff8a}
+}
+</style>
+<script id="sq-up-js">(function(){
+var R=document.documentElement;
+var S={size:1,op:1,vib:true};try{var o=JSON.parse(localStorage.getItem("sr-controls-v1")||"{}");["size","op","vib"].forEach(function(k){if(k in o)S[k]=o[k];});}catch(e){}
+function save(){try{var o=JSON.parse(localStorage.getItem("sr-controls-v1")||"{}");o.size=S.size;o.op=S.op;o.vib=S.vib;localStorage.setItem("sr-controls-v1",JSON.stringify(o));}catch(e){}}
+function buzz(ms){if(S.vib&&navigator.vibrate){try{navigator.vibrate(ms);}catch(e){}}}
+function pauseNow(){if(R.dataset.touch!=="play")return;var b=document.querySelector('[data-b="map"]');if(!b)return;var f=function(t){b.dispatchEvent(new PointerEvent(t,{bubbles:true,cancelable:true,pointerId:97,pointerType:"touch"}));};f("pointerdown");setTimeout(function(){f("pointerup");},40);}
+document.addEventListener("visibilitychange",function(){if(document.hidden)pauseNow();});window.addEventListener("pagehide",pauseNow);
+if(!R.classList.contains("srml"))return;
+window.__SQK=Math.min(1.1,Math.max(.9,+S.size||1));
+document.addEventListener("pointerdown",function(e){if(e.isTrusted&&e.target.closest&&e.target.closest("[data-b],#stick"))buzz(10);},true);
+var gear=document.createElement("div");gear.id="sq-gear";gear.setAttribute("role","button");gear.setAttribute("aria-label","Control settings");gear.textContent="\u2699";document.body.appendChild(gear);
+var ov=document.createElement("div");ov.id="sq-set";ov.hidden=true;
+ov.innerHTML='<div class="box"><h3>CONTROLS</h3><div class="r"><span>SIZE</span><div class="g" data-k="size"><button data-v="0.9">S</button><button data-v="1">M</button><button data-v="1.1">L</button></div></div><div class="r"><span>OPACITY</span><div class="g" data-k="op"><button data-v="0.55">55%</button><button data-v="0.8">80%</button><button data-v="1">100%</button></div></div><div class="r"><span>VIBRATE</span><div class="g" data-k="vib"><button data-v="true">ON</button><button data-v="false">OFF</button></div></div><button class="x" data-close="1">DONE</button></div>';
+document.body.appendChild(ov);
+function place(){var sat=parseFloat(getComputedStyle(R).getPropertyValue("--sat"))||0,sar=parseFloat(getComputedStyle(R).getPropertyValue("--sar"))||0;gear.style.left=(innerWidth-sar-58)+"px";gear.style.top=(sat+8)+"px";}
+function apply(){window.__SQK=+S.size||1;R.classList.toggle("sqop",+S.op<1);R.style.setProperty("--sqop",S.op);
+ [].forEach.call(ov.querySelectorAll(".g"),function(g){var k=g.dataset.k;[].forEach.call(g.children,function(b){b.classList.toggle("sel",String(S[k])===b.dataset.v);});});
+ if(window.__SRML_LAYOUT)window.__SRML_LAYOUT();place();}
+apply();window.addEventListener("resize",place);
+ov.addEventListener("pointerdown",function(e){e.stopPropagation();});
+ov.addEventListener("pointerup",function(e){e.stopPropagation();var b=e.target.closest&&e.target.closest("button");if(!b){if(e.target===ov)ov.hidden=true;return;}e.preventDefault();
+ if(b.dataset.close){ov.hidden=true;return;}var k=b.parentNode.dataset.k,v=b.dataset.v;S[k]=v==="true"?true:v==="false"?false:+v;save();apply();if(k==="vib"&&S.vib)buzz(15);});
+gear.addEventListener("pointerdown",function(e){e.preventDefault();e.stopPropagation();});
+gear.addEventListener("pointerup",function(e){e.preventDefault();e.stopPropagation();ov.hidden=false;});
+})();</script>
+
 </body></html>
